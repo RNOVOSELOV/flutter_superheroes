@@ -11,5 +11,5 @@ void main() {
   group("l05h02", () => runTestLesson1Task2());
   group("l05h03", () => runTestLesson1Task3());
   group("l05h04", () => runTestLesson1Task4());
-//  group("l05h05", () => runTestLesson1Task5());
+  group("l05h05", () => runTestLesson1Task5());
 }

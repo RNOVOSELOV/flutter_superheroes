@@ -12,6 +12,5 @@ class SuperheroesColors {
 
   static const whiteTextColor = white;
   static const actionButtonColor = Color(0xFF00BCD4);
-
-
+  static const cardBackground = Color(0xFF2C3243);
 }
