@@ -17,7 +17,12 @@ class SuperheroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () { Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(name: name,)));},
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => SuperheroPage(
+                  name: name,
+                )));
+      },
       child: Container(
         height: 70,
         color: SuperheroesColors.cardBackground,
