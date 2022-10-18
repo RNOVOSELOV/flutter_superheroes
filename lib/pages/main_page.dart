@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
+import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
 import 'package:superheroes/widgets/action_button.dart';
@@ -96,6 +97,9 @@ class _SearchWidgetState extends State<SearchWidget> {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      cursorColor: SuperheroesColors.textEditCursorColor,
+      textInputAction: TextInputAction.search,
+      textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
           filled: true,
           fillColor: SuperheroesColors.textEditBackground,
@@ -103,7 +107,12 @@ class _SearchWidgetState extends State<SearchWidget> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide:
-            BorderSide(color: SuperheroesColors.textEditBorderColorEnabled),
+                const BorderSide(color: SuperheroesColors.textEditBorderColorEnabled),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+                color: SuperheroesColors.textEditBorderColorEditing, width: 2),
           ),
           prefixIcon: Icon(
             Icons.search,
@@ -159,17 +168,19 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.loadingError:
             return const LoadingErrorWidget();
           case MainPageState.searchResults:
-            return SuperheroesList(title: "Search result",
+            return SuperheroesList(
+                title: "Search result",
                 stream: bloc.observeSearchedSuperheroes());
           case MainPageState.favorites:
-            return SuperheroesList(title: "Your favorites",
+            return SuperheroesList(
+                title: "Your favorites",
                 stream: bloc.observeFavoriteSuperheroes());
           default:
             return Center(
                 child: Text(
-                  state.toString(),
-                  style: const TextStyle(color: Colors.white),
-                ));
+              state.toString(),
+              style: const TextStyle(color: Colors.white),
+            ));
         }
       },
     );
@@ -231,11 +242,13 @@ class SuperheroesList extends StatelessWidget {
         }
         final List<SuperheroInfo> superheroes = snapshot.data!;
         return ListView.separated(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
           itemCount: superheroes.length + 1,
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
               return Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 90, bottom: 12),
                 child: Text(
                   title,
                   style: const TextStyle(
@@ -250,14 +263,21 @@ class SuperheroesList extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SuperheroCard(
-                name: item.name,
-                realName: item.realName,
-                imageUrl: item.imageUrl,
+                superhero: item,
+                onTab: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SuperheroPage(
+                            name: item.name,
+                          )));
+                },
               ),
             );
-          }, separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(height: 8,);
-        },
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(
+              height: 8,
+            );
+          },
         );
       },
     );

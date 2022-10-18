@@ -13,6 +13,8 @@ class SuperheroesColors {
   static const cardBackground = Color(0xFF2C3243);
 
   static const textEditIconsColor = Color(0x8AFFFFFF);
+  static const textEditCursorColor = white;
   static const textEditBorderColorEnabled = Color.fromRGBO(255, 255, 255, 0.75);
+  static const textEditBorderColorEditing = white;
   static const textEditBackground = Color(0xBF2C3243);
 }
