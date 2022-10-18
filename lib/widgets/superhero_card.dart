@@ -25,7 +25,11 @@ class SuperheroCard extends StatelessWidget {
       },
       child: Container(
         height: 70,
-        color: SuperheroesColors.cardBackground,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: SuperheroesColors.cardBackground,
+        ),
         child: Row(
           children: [
             Image.network(
