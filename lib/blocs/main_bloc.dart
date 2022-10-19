@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:rxdart/rxdart.dart';
 
 class MainBloc {
@@ -57,8 +56,14 @@ class MainBloc {
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    await Future.delayed(Duration(seconds: 1));
-    return SuperheroInfo.mocked;
+    await Future.delayed(const Duration(seconds: 1));
+    List<SuperheroInfo> searchedList = [];
+    for (SuperheroInfo info in SuperheroInfo.mocked) {
+      if (info.name.toUpperCase().contains(text.toUpperCase())) {
+        searchedList.add(info);
+      }
+    }
+    return searchedList;
   }
 
   Stream<List<SuperheroInfo>> observeFavoriteSuperheroes() =>

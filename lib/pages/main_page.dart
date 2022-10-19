@@ -50,18 +50,18 @@ class MainPageContent extends StatelessWidget {
 
     return Stack(children: const [
       MainPageStateWidget(),
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 30),
-          // child: ActionButton(
-          //   text: 'Next state',
-          //   onTap: () {
-          //     bloc.nextState();
-          //   },
-          // ),
-        ),
-      ),
+      // Align(
+      //   alignment: Alignment.bottomCenter,
+      //   child: Padding(
+      //     padding: EdgeInsets.only(bottom: 30),
+      //     child: ActionButton(
+      //       text: 'Next state',
+      //       onTap: () {
+      //         bloc.nextState();
+      //       },
+      //     ),
+      //   ),
+      // ),
       Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 12),
         child: SearchWidget(),
@@ -101,37 +101,40 @@ class _SearchWidgetState extends State<SearchWidget> {
       textInputAction: TextInputAction.search,
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
-          filled: true,
-          fillColor: SuperheroesColors.textEditBackground,
-          isDense: true,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide:
-                const BorderSide(color: SuperheroesColors.textEditBorderColorEnabled),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-                color: SuperheroesColors.textEditBorderColorEditing, width: 2),
-          ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: SuperheroesColors.textEditIconsColor,
-            size: 24,
-          ),
-          suffix: GestureDetector(
-              onTap: () {
-                controller.clear();
-              },
-              child: Icon(
-                Icons.clear,
-                color: SuperheroesColors.whiteTextColor,
-                size: 24,
-              )),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          )),
-      style: TextStyle(
+        filled: true,
+        fillColor: SuperheroesColors.textEditBackground,
+        isDense: true,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+              color: controller.value.text.isEmpty
+                  ? SuperheroesColors.textEditBorderColorEnabled
+                  : SuperheroesColors.textEditBorderColorEditing),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+              color: SuperheroesColors.textEditBorderColorEditing, width: 2),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        prefixIcon: const Icon(
+          Icons.search,
+          color: SuperheroesColors.textEditIconsColor,
+          size: 24,
+        ),
+        suffix: GestureDetector(
+            onTap: () {
+              controller.clear();
+            },
+            child: const Icon(
+              Icons.clear,
+              color: SuperheroesColors.whiteTextColor,
+              size: 24,
+            )),
+      ),
+      style: const TextStyle(
         fontWeight: FontWeight.w400,
         fontSize: 20,
         color: SuperheroesColors.whiteTextColor,
@@ -242,7 +245,7 @@ class SuperheroesList extends StatelessWidget {
         }
         final List<SuperheroInfo> superheroes = snapshot.data!;
         return ListView.separated(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: superheroes.length + 1,
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
@@ -263,8 +266,8 @@ class SuperheroesList extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SuperheroCard(
-                superhero: item,
-                onTab: () {
+                superheroInfo: item,
+                onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => SuperheroPage(
                             name: item.name,

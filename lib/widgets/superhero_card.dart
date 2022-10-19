@@ -4,19 +4,19 @@ import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 
 class SuperheroCard extends StatelessWidget {
-  final SuperheroInfo superhero;
-  final VoidCallback onTab;
+  final SuperheroInfo superheroInfo;
+  final VoidCallback onTap;
 
   const SuperheroCard({
     Key? key,
-    required this.superhero,
-    required this.onTab,
+    required this.superheroInfo,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTab,
+      onTap: onTap,
       child: Container(
         height: 70,
         clipBehavior: Clip.antiAlias,
@@ -27,7 +27,7 @@ class SuperheroCard extends StatelessWidget {
         child: Row(
           children: [
             Image.network(
-              superhero.imageUrl,
+              superheroInfo.imageUrl,
               height: 70,
               width: 70,
               fit: BoxFit.cover,
@@ -41,14 +41,14 @@ class SuperheroCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  superhero.name.toUpperCase(),
+                  superheroInfo.name.toUpperCase(),
                   style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: SuperheroesColors.whiteTextColor),
                 ),
                 Text(
-                  superhero.realName,
+                  superheroInfo.realName,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
