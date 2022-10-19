@@ -16,6 +16,8 @@ dependencies:
   rxdart: ^0.27.1
   provider: ^5.0.0
   google_fonts: ^3.0.1
+  http: ^0.13.5
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -29,4 +31,5 @@ flutter:
   assets:
     - google_fonts/
     - assets/images/
+    - .env
 

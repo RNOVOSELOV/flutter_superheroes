@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:http/http.dart' as http;
 
 class MainBloc {
   static const minSymbols = 3;
@@ -59,14 +61,10 @@ class MainBloc {
   Future<List<SuperheroInfo>> search(final String text) async {
     await Future.delayed(const Duration(seconds: 1));
     List<SuperheroInfo> searchedList = [];
-    /*
-    for (SuperheroInfo info in SuperheroInfo.mocked) {
-      if (info.name.toUpperCase().contains(text.toUpperCase())) {
-        searchedList.add(info);
-      }
-    }
-    return searchedList;
-    */
+    final token = dotenv.env["SUPERHERO_TOKEN"];
+    final uri = "https://www.superheroapi.com/api/${token}/search/superman";
+    final responce = await http.get(Uri.parse(uri));
+
     return SuperheroInfo.mocked
         .where((superheroInfo) =>
             superheroInfo.name.toUpperCase().contains(text.toUpperCase()))
@@ -107,11 +105,13 @@ class MainBloc {
     print("remove last");
     favoriteSuperheroesSubject.skipLast(1);
 
-    final List<SuperheroInfo> currentFavorites = favoriteSuperheroesSubject.value;
+    final List<SuperheroInfo> currentFavorites =
+        favoriteSuperheroesSubject.value;
     if (currentFavorites.isEmpty) {
       favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
     } else {
-      favoriteSuperheroesSubject.add(currentFavorites.sublist(0, currentFavorites.length - 1));
+      favoriteSuperheroesSubject
+          .add(currentFavorites.sublist(0, currentFavorites.length - 1));
     }
   }
 }
