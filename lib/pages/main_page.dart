@@ -81,6 +81,7 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   final TextEditingController controller = TextEditingController();
+  bool haveSearchedText = false;
 
   @override
   void initState() {
@@ -89,6 +90,12 @@ class _SearchWidgetState extends State<SearchWidget> {
       MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
       controller.addListener(() {
         bloc.updateText(controller.text);
+        final haveText = controller.text.isNotEmpty;
+        if (haveSearchedText != haveText) {
+          setState(() {
+            haveSearchedText = haveText;
+          });
+        }
       });
     });
   }
@@ -106,10 +113,11 @@ class _SearchWidgetState extends State<SearchWidget> {
         isDense: true,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-              color: controller.value.text.isEmpty
-                  ? SuperheroesColors.textEditBorderColorEnabled
-                  : SuperheroesColors.textEditBorderColorEditing),
+          borderSide: haveSearchedText
+              ? const BorderSide(
+                  width: 2, color: SuperheroesColors.textEditBorderColorEditing)
+              : const BorderSide(
+                  color: SuperheroesColors.textEditBorderColorEnabled),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -161,7 +169,18 @@ class MainPageStateWidget extends StatelessWidget {
         final MainPageState state = snapshot.data!;
         switch (state) {
           case MainPageState.noFavorites:
-            return const NoFavoritesWidget();
+            return Stack(
+              children: [
+                NoFavoritesWidget(),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ActionButton(
+                          text: "Remove", onTap: () => bloc.removeFavorite()),
+                    )),
+              ],
+            );
           case MainPageState.minSymbols:
             return const MinSymbolsWidget();
           case MainPageState.loading:
@@ -175,9 +194,20 @@ class MainPageStateWidget extends StatelessWidget {
                 title: "Search result",
                 stream: bloc.observeSearchedSuperheroes());
           case MainPageState.favorites:
-            return SuperheroesList(
-                title: "Your favorites",
-                stream: bloc.observeFavoriteSuperheroes());
+            return Stack(
+              children: [
+                SuperheroesList(
+                    title: "Your favorites",
+                    stream: bloc.observeFavoriteSuperheroes()),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ActionButton(
+                          text: "Remove", onTap: () => bloc.removeFavorite()),
+                    )),
+              ],
+            );
           default:
             return Center(
                 child: Text(

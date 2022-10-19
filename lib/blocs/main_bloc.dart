@@ -36,6 +36,7 @@ class MainBloc {
       } else if (value.searchText.length < minSymbols) {
         stateSubject.add(MainPageState.minSymbols);
       } else {
+        stateSubject.add(MainPageState.searchResults);
         searchForSuperheroes(value.searchText);
       }
     });
@@ -58,12 +59,18 @@ class MainBloc {
   Future<List<SuperheroInfo>> search(final String text) async {
     await Future.delayed(const Duration(seconds: 1));
     List<SuperheroInfo> searchedList = [];
+    /*
     for (SuperheroInfo info in SuperheroInfo.mocked) {
       if (info.name.toUpperCase().contains(text.toUpperCase())) {
         searchedList.add(info);
       }
     }
     return searchedList;
+    */
+    return SuperheroInfo.mocked
+        .where((superheroInfo) =>
+            superheroInfo.name.toUpperCase().contains(text.toUpperCase()))
+        .toList();
   }
 
   Stream<List<SuperheroInfo>> observeFavoriteSuperheroes() =>
@@ -94,6 +101,18 @@ class MainBloc {
 
     textSubscription?.cancel();
     searchSubscription?.cancel();
+  }
+
+  void removeFavorite() {
+    print("remove last");
+    favoriteSuperheroesSubject.skipLast(1);
+
+    final List<SuperheroInfo> currentFavorites = favoriteSuperheroesSubject.value;
+    if (currentFavorites.isEmpty) {
+      favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
+    } else {
+      favoriteSuperheroesSubject.add(currentFavorites.sublist(0, currentFavorites.length - 1));
+    }
   }
 }
 
