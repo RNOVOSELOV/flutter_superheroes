@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
+import 'package:superheroes/models/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
@@ -15,7 +17,9 @@ class MainBloc {
   StreamSubscription? textSubscription;
   StreamSubscription? searchSubscription;
 
-  MainBloc() {
+  http.Client? client;
+
+  MainBloc({this.client}) {
     stateSubject.add(MainPageState.noFavorites);
 
     textSubscription =
@@ -59,16 +63,31 @@ class MainBloc {
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    await Future.delayed(const Duration(seconds: 1));
     List<SuperheroInfo> searchedList = [];
     final token = dotenv.env["SUPERHERO_TOKEN"];
-    final uri = "https://www.superheroapi.com/api/${token}/search/superman";
-    final responce = await http.get(Uri.parse(uri));
+    final uri = "https://www.superheroapi.com/api/$token/search/$text";
+    final responce = await (client ??= http.Client()).get(Uri.parse(uri));
+    final decoded = json.decode(responce.body);
+    print(decoded);
 
-    return SuperheroInfo.mocked
-        .where((superheroInfo) =>
-            superheroInfo.name.toUpperCase().contains(text.toUpperCase()))
-        .toList();
+    if (decoded["response"] == "success") {
+      final List<dynamic> results = decoded["results"];
+      final List<Superhero> superheroes = results.map((rawSuperhero) {
+        return Superhero.fromJson(rawSuperhero);
+      }).toList();
+      final List<SuperheroInfo> found = superheroes.map((e) {
+        return SuperheroInfo(
+            name: e.name,
+            realName: e.biography.fullName,
+            imageUrl: e.image.url);
+      }).toList();
+      return found;
+    } else if (decoded["response"] == "error") {
+      if (decoded["error"] == "character with given name not found") {
+        return [];
+      }
+    }
+    throw Exception("Unknown error happened");
   }
 
   Stream<List<SuperheroInfo>> observeFavoriteSuperheroes() =>
@@ -99,6 +118,8 @@ class MainBloc {
 
     textSubscription?.cancel();
     searchSubscription?.cancel();
+
+    client?.close();
   }
 
   void removeFavorite() {
