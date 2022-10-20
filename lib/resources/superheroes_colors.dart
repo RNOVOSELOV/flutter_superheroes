@@ -9,8 +9,10 @@ class SuperheroesColors {
   static const white = Color(0xFFFFFFFF);
 
   static const whiteTextColor = white;
-  static const actionButtonColor = Color(0xFF00BCD4);
+  static const actionButtonColor = blue;
   static const cardBackground = Color(0xFF2C3243);
+  static const imagePlaceholder = Color.fromRGBO(255, 255, 255, 0.24);
+  static const progressImageColor = blue;
 
   static const textEditIconsColor = Color(0x8AFFFFFF);
   static const textEditCursorColor = white;
