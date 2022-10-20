@@ -3,4 +3,8 @@ class ApiException implements Exception {
 
   ApiException({required this.message});
 
+  @override
+  String toString() {
+    return 'ApiException{message: $message}';
+  }
 }

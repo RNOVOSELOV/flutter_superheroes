@@ -9,7 +9,6 @@ import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
-  String lastSearchedString = "";
 
   final FocusNode searchFocus = FocusNode();
   FocusNode getSearchFocusNode () => searchFocus;
@@ -59,11 +58,11 @@ class MainBloc {
   }
 
   void retryLastQuery () {
-    searchForSuperheroes(lastSearchedString);
+    String currentText = currentTextSubject.value;
+    searchForSuperheroes(currentText);
   }
 
   void searchForSuperheroes(final String text) {
-    lastSearchedString = text;
     stateSubject.add(MainPageState.loading);
     searchSubscription = search(text).asStream().listen((searchResult) {
       if (searchResult.isEmpty) {
@@ -87,10 +86,11 @@ class MainBloc {
       const Duration(seconds: 10),
       onTimeout: () => throw ApiException (message: "Timeout exception")
     );
+
     if (responce.statusCode >= 500 && responce.statusCode < 600) {
-      ApiException (message: 'Server error happened');
+      throw ApiException (message: 'Server error happened');
     } else if (responce.statusCode >= 400 && responce.statusCode < 500) {
-      ApiException (message: 'Client error happened');
+      throw ApiException (message: 'Client error happened');
     } else if (responce.statusCode >= 200 && responce.statusCode < 300) {
       final decoded = json.decode(responce.body);
       if (decoded["response"] == "success") {
@@ -145,6 +145,7 @@ class MainBloc {
     searchSubscription?.cancel();
 
     client?.close();
+    searchFocus.dispose();
   }
 
   void removeFavorite() {
