@@ -11,6 +11,6 @@ void main() async {
   await dotenv.load(fileName: ".env");
   group("l07h01", () => runTestLesson3Task1());
   group("l07h02", () => runTestLesson3Task2());
-//  group("l07h03", () => runTestLesson3Task3());
+  group("l07h03", () => runTestLesson3Task3());
 //  group("l07h04", () => runTestLesson3Task4());
 }
