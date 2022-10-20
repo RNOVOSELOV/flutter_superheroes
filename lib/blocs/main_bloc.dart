@@ -9,6 +9,7 @@ import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
+  String lastSearchedString = "";
 
   final FocusNode searchFocus = FocusNode();
   FocusNode getSearchFocusNode () => searchFocus;
@@ -16,7 +17,6 @@ class MainBloc {
   void setSearchActiveAndClear () {
     searchFocus.requestFocus();
   }
-
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
   final favoriteSuperheroesSubject =
@@ -58,7 +58,12 @@ class MainBloc {
     });
   }
 
+  void retryLastQuery () {
+    searchForSuperheroes(lastSearchedString);
+  }
+
   void searchForSuperheroes(final String text) {
+    lastSearchedString = text;
     stateSubject.add(MainPageState.loading);
     searchSubscription = search(text).asStream().listen((searchResult) {
       if (searchResult.isEmpty) {
@@ -76,11 +81,12 @@ class MainBloc {
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    List<SuperheroInfo> searchedList = [];
     final token = dotenv.env["SUPERHERO_TOKEN"];
     final uri = "https://www.superheroapi.com/api/$token/search/$text";
-    final responce = await (client ??= http.Client()).get(Uri.parse(uri));
-
+    final responce = await (client ??= http.Client()).get(Uri.parse(uri)).timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => throw ApiException (message: "Timeout exception")
+    );
     if (responce.statusCode >= 500 && responce.statusCode < 600) {
       ApiException (message: 'Server error happened');
     } else if (responce.statusCode >= 400 && responce.statusCode < 500) {

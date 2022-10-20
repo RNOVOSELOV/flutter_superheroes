@@ -269,7 +269,7 @@ class LoadingErrorWidget extends StatelessWidget {
       imageHeight: 106,
       imageWidth: 126,
       imageTopPadding: 22,
-      onTap: () => bloc.setSearchActiveAndClear(),
+      onTap: () => bloc.retryLastQuery(),
     );
   }
 }
