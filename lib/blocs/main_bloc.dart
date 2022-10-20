@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,14 @@ import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
+
+  final FocusNode searchFocus = FocusNode();
+  FocusNode getSearchFocusNode () => searchFocus;
+
+  void setSearchActiveAndClear () {
+    searchFocus.requestFocus();
+  }
+
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
   final favoriteSuperheroesSubject =
