@@ -1,12 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
-import 'package:superheroes/models/superhero.dart';
+import 'package:superheroes/exception/api_exception.dart';
+import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
+  String lastSearchedString = "";
+
+  final FocusNode searchFocus = FocusNode();
+  FocusNode getSearchFocusNode () => searchFocus;
+
+  void setSearchActiveAndClear () {
+    searchFocus.requestFocus();
+  }
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
   final favoriteSuperheroesSubject =
@@ -48,7 +58,12 @@ class MainBloc {
     });
   }
 
+  void retryLastQuery () {
+    searchForSuperheroes(lastSearchedString);
+  }
+
   void searchForSuperheroes(final String text) {
+    lastSearchedString = text;
     stateSubject.add(MainPageState.loading);
     searchSubscription = search(text).asStream().listen((searchResult) {
       if (searchResult.isEmpty) {
@@ -58,33 +73,43 @@ class MainBloc {
         stateSubject.add(MainPageState.searchResults);
       }
     }, onError: (error, stackTrace) {
+      if (error is ApiException) {
+        print(error.message);
+      }
       stateSubject.add(MainPageState.loadingError);
     });
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    List<SuperheroInfo> searchedList = [];
     final token = dotenv.env["SUPERHERO_TOKEN"];
     final uri = "https://www.superheroapi.com/api/$token/search/$text";
-    final responce = await (client ??= http.Client()).get(Uri.parse(uri));
-    final decoded = json.decode(responce.body);
-    print(decoded);
-
-    if (decoded["response"] == "success") {
-      final List<dynamic> results = decoded["results"];
-      final List<Superhero> superheroes = results.map((rawSuperhero) {
-        return Superhero.fromJson(rawSuperhero);
-      }).toList();
-      final List<SuperheroInfo> found = superheroes.map((e) {
-        return SuperheroInfo(
-            name: e.name,
-            realName: e.biography.fullName,
-            imageUrl: e.image.url);
-      }).toList();
-      return found;
-    } else if (decoded["response"] == "error") {
-      if (decoded["error"] == "character with given name not found") {
-        return [];
+    final responce = await (client ??= http.Client()).get(Uri.parse(uri)).timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => throw ApiException (message: "Timeout exception")
+    );
+    if (responce.statusCode >= 500 && responce.statusCode < 600) {
+      ApiException (message: 'Server error happened');
+    } else if (responce.statusCode >= 400 && responce.statusCode < 500) {
+      ApiException (message: 'Client error happened');
+    } else if (responce.statusCode >= 200 && responce.statusCode < 300) {
+      final decoded = json.decode(responce.body);
+      if (decoded["response"] == "success") {
+        final List<dynamic> results = decoded["results"];
+        final List<Superhero> superheroes = results.map((rawSuperhero) {
+          return Superhero.fromJson(rawSuperhero);
+        }).toList();
+        final List<SuperheroInfo> found = superheroes.map((e) {
+          return SuperheroInfo(
+              name: e.name,
+              realName: e.biography.fullName,
+              imageUrl: e.image.url);
+        }).toList();
+        return found;
+      } else if (decoded["response"] == "error") {
+        if (decoded["error"] == "character with given name not found") {
+          return [];
+        }
+        throw ApiException (message: 'Client error happened');
       }
     }
     throw Exception("Unknown error happened");

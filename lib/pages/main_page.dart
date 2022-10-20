@@ -112,7 +112,9 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   @override
   Widget build(BuildContext context) {
+    MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
+      focusNode: bloc.getSearchFocusNode(),
       controller: controller,
       cursorColor: SuperheroesColors.textEditCursorColor,
       textInputAction: TextInputAction.search,
@@ -237,7 +239,8 @@ class NothingFoundWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const InfoWithButton(
+    MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+    return InfoWithButton(
       title: 'Nothing found',
       subTitle: 'Search for something else',
       buttonText: 'Search',
@@ -245,6 +248,7 @@ class NothingFoundWidget extends StatelessWidget {
       imageHeight: 112,
       imageWidth: 84,
       imageTopPadding: 16,
+      onTap: () => bloc.setSearchActiveAndClear(),
     );
   }
 }
@@ -256,7 +260,8 @@ class LoadingErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const InfoWithButton(
+    MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+    return InfoWithButton(
       title: 'Error happened',
       subTitle: 'Please, try again',
       buttonText: 'Retry',
@@ -264,6 +269,7 @@ class LoadingErrorWidget extends StatelessWidget {
       imageHeight: 106,
       imageWidth: 126,
       imageTopPadding: 22,
+      onTap: () => bloc.retryLastQuery(),
     );
   }
 }
@@ -334,7 +340,8 @@ class NoFavoritesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const InfoWithButton(
+    MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+    return InfoWithButton(
       title: 'No favorites yet',
       subTitle: 'Search and add',
       buttonText: 'Search',
@@ -342,6 +349,7 @@ class NoFavoritesWidget extends StatelessWidget {
       imageHeight: 119,
       imageWidth: 108,
       imageTopPadding: 9,
+      onTap: () => bloc.setSearchActiveAndClear(),
     );
   }
 }
