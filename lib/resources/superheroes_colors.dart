@@ -7,12 +7,20 @@ class SuperheroesColors {
   static const background = Color(0xFF10141E);
   static const blue = Color(0xFF00BCD4);
   static const white = Color(0xFFFFFFFF);
+  static const red = Color (0xFF961B1B);
+  static const grey = Color (0xFF727272);
+  static const green = Color (0xFF2AAB6A);
 
   static const whiteTextColor = white;
   static const actionButtonColor = blue;
   static const cardBackground = Color(0xFF2C3243);
   static const imagePlaceholder = Color.fromRGBO(255, 255, 255, 0.24);
   static const progressImageColor = blue;
+  static const cardSwipeRemove = red;
+
+  static const goodPersonalInfo = green;
+  static const badPersonalInfo = red;
+  static const neutralPersonalInfo = grey;
 
   static const textEditIconsColor = Color(0x8AFFFFFF);
   static const textEditCursorColor = white;

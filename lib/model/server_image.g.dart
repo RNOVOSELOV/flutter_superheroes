@@ -7,7 +7,7 @@ part of 'server_image.dart';
 // **************************************************************************
 
 ServerImage _$ServerImageFromJson(Map<String, dynamic> json) => ServerImage(
-      json['url'] as String,
+      url: json['url'] as String,
     );
 
 Map<String, dynamic> _$ServerImageToJson(ServerImage instance) =>
