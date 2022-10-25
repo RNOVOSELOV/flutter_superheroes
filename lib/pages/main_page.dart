@@ -284,7 +284,7 @@ class SuperheroesList extends StatelessWidget {
               return ListTitleWidget(title: title);
             }
             final SuperheroInfo item = superheroes[index - 1];
-            return ListTileWidget(
+            return ListTile(
               superhero: item,
               ableToSwipe: ableToSwipe,
             );
@@ -300,11 +300,11 @@ class SuperheroesList extends StatelessWidget {
   }
 }
 
-class ListTileWidget extends StatelessWidget {
+class ListTile extends StatelessWidget {
   final SuperheroInfo superhero;
   final bool ableToSwipe;
 
-  const ListTileWidget({
+  const ListTile({
     Key? key,
     required this.superhero,
     required this.ableToSwipe,
@@ -323,6 +323,8 @@ class ListTileWidget extends StatelessWidget {
 }
 
 class ListTileDismissibleWidget extends StatelessWidget {
+  final String dismissibleBackgroundText = "Remove\nfrom\nfavorites";
+
   const ListTileDismissibleWidget({
     Key? key,
     required this.superhero,
@@ -337,14 +339,33 @@ class ListTileDismissibleWidget extends StatelessWidget {
     return Dismissible(
       key: ValueKey(superhero.id),
       background: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: SuperheroesColors.cardSwipeRemove,
         ),
         height: 70,
-        alignment: Alignment.center,
+        alignment: Alignment.centerLeft,
         child: Text(
-          "Remove from favorites".toUpperCase(),
+          dismissibleBackgroundText.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 12,
+            color: SuperheroesColors.whiteTextColor,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+      secondaryBackground: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: SuperheroesColors.cardSwipeRemove,
+        ),
+        height: 70,
+        alignment: Alignment.centerRight,
+        child: Text(
+          dismissibleBackgroundText.toUpperCase(),
+          textAlign: TextAlign.right,
           style: const TextStyle(
             fontSize: 12,
             color: SuperheroesColors.whiteTextColor,
