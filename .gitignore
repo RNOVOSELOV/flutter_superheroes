@@ -53,4 +53,6 @@ linux/flutter/generated_plugin_registrant.h
 linux/flutter/generated_plugins.cmake
 macos/Flutter/Flutter-Debug.xcconfig
 macos/Flutter/Flutter-Release.xcconfig
+
 *.env
+**/failures/*.png

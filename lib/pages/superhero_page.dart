@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/superhero_bloc.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
-import 'package:superheroes/model/server_image.dart';
 import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:http/http.dart' as http;
@@ -72,9 +71,7 @@ class SuperheroContentPage extends StatelessWidget {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                  ),
+                  const SizedBox(height: 30),
                   if (superhero.powerstats.isNotNull())
                     PowerstatsWidget(powerstats: superhero.powerstats),
                   BiographyWidget(biography: superhero.biography),
@@ -104,9 +101,7 @@ class SuperheroAppBar extends StatelessWidget {
       pinned: true,
       floating: true,
       expandedHeight: 348,
-      actions: [
-        FavoriteButtonWidget()
-      ],
+      actions: const [FavoriteButtonWidget()],
       backgroundColor: SuperheroesColors.background,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
@@ -181,7 +176,7 @@ class PowerstatsWidget extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 24,
         ),
         Row(
@@ -215,7 +210,7 @@ class PowerstatsWidget extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         Row(
@@ -249,7 +244,7 @@ class PowerstatsWidget extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 36,
         ),
       ],
@@ -288,7 +283,7 @@ class PowerstatWidget extends StatelessWidget {
           padding: const EdgeInsets.only(top: 44),
           child: Text(
             name.toUpperCase(),
-            style: TextStyle(
+            style: const TextStyle(
               color: SuperheroesColors.whiteTextColor,
               fontWeight: FontWeight.w700,
               fontSize: 12,
@@ -320,7 +315,7 @@ class ArcWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: ArcCustomPainter(color: color, value: value),
-      size: Size(66, 33),
+      size: const Size(66, 33),
     );
   }
 }
@@ -369,11 +364,11 @@ class BiographyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 300,
+      alignment: Alignment.center,
       child: Text(
         biography.toJson().toString(),
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
-      alignment: Alignment.center,
     );
   }
 }
