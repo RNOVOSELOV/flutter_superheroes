@@ -9,9 +9,11 @@ import 'package:superheroes/favorite_superheroes_storage.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class SuperheroBlock {
+  Superhero? favSuperhero;
   http.Client? client;
   final String id;
 
+  final BehaviorSubject<SuperheroPageState> stateSubject = BehaviorSubject();
   final superheroSubject = BehaviorSubject<Superhero>();
 
   StreamSubscription? requestSubscription;
@@ -20,22 +22,24 @@ class SuperheroBlock {
   StreamSubscription? removeFromFavoriteSubscription;
 
   SuperheroBlock({required this.id, this.client}) {
+    favSuperhero = null;
     getFromFavorites();
   }
 
-  void getFromFavorites () {
+  void getFromFavorites() {
     getFromFavoritesSubscription?.cancel();
     getFromFavoritesSubscription = FavoriteSuperheroesStorage.getInstance()
         .getSuperhero(id)
         .asStream()
         .listen((superhero) {
-        if (superhero != null) {
-          superheroSubject.add(superhero);
-        }
-        requestSuperhero();
+      if (superhero != null) {
+        favSuperhero = superhero;
+        superheroSubject.add(superhero);
+      }
+      requestSuperhero();
     },
-        onError: (error, stackTrace) => print(
-            "Error happened in get from favorites: $error, $stackTrace"));
+            onError: (error, stackTrace) => print(
+                "Error happened in get from favorites: $error, $stackTrace"));
   }
 
   void addToFavorite() {
@@ -64,17 +68,24 @@ class SuperheroBlock {
         .listen((event) {
       print("EVENT: removed from favorite $event");
     },
-        onError: (error, stackTrace) => print(
-            "Error happened in remove from favorites: $error, $stackTrace"));
+            onError: (error, stackTrace) => print(
+                "Error happened in remove from favorites: $error, $stackTrace"));
   }
 
   Stream<bool> observeIsFavorite() =>
       FavoriteSuperheroesStorage.getInstance().observeIsFavorite(id);
 
+  Stream<SuperheroPageState> observeSuperheroPageState() => stateSubject;
+
   void requestSuperhero() {
     requestSubscription?.cancel();
     requestSubscription = request().asStream().listen((superhero) {
-      superheroSubject.add(superhero);
+      print("${favSuperhero.hashCode}");
+      print("${superhero.hashCode}");
+      print(superhero.hashCode == favSuperhero.hashCode);
+   //   if (superheroSubject.value != superhero) {
+        superheroSubject.add(superhero);
+   //   }
     }, onError: (error, stackTrace) {
       if (error is ApiException) {
         print(error.message);
@@ -116,5 +127,12 @@ class SuperheroBlock {
     addToFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription?.cancel();
     superheroSubject.close();
+    stateSubject.close();
   }
+}
+
+enum SuperheroPageState {
+  loading,
+  loaded,
+  error,
 }
