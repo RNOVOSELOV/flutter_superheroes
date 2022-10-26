@@ -1,16 +1,14 @@
-# superheroes
+# Test your reaction speed
 
-A new Flutter project.
+<img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/Supergeroes.gif" width="100" height="220" />
 
-## Getting Started
+## О проекте
 
-This project is a starting point for a Flutter application.
+"Supergeroes" - Бесплатное приложение, реализующее открытое API https://www.superheroapi.com/.
 
-A few resources to get you started if this is your first Flutter project:
+## Развитие проекта
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Версия 1.0
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Реализован интерфейс, возможность добавления супергероя в "Избранное".
+
