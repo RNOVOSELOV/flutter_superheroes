@@ -30,16 +30,18 @@ class SuperheroBlock {
   }
 
   void getFromFavorites() {
+    bool isInFavorite = false;
     getFromFavoritesSubscription?.cancel();
     getFromFavoritesSubscription = FavoriteSuperheroesStorage.getInstance()
         .getSuperhero(id)
         .asStream()
         .listen((superhero) {
       if (superhero != null) {
+        isInFavorite = true;
         superheroSubject.add(superhero);
         stateSubject.add(SuperheroPageState.loaded);
       }
-      requestSuperhero();
+      requestSuperhero(isInFavorite);
     },
             onError: (error, stackTrace) => print(
                 "Error happened in get from favorites: $error, $stackTrace"));
@@ -78,19 +80,23 @@ class SuperheroBlock {
   Stream<bool> observeIsFavorite() =>
       FavoriteSuperheroesStorage.getInstance().observeIsFavorite(id);
 
-  Stream<SuperheroPageState> observeSuperheroPageState() => stateSubject;
+  Stream<SuperheroPageState> observeSuperheroPageState() => stateSubject.distinct();
 
-  void requestSuperhero() {
+  void requestSuperhero(final bool isInFavorite) {
     requestSubscription?.cancel();
     requestSubscription = request().asStream().listen((superhero) {
       superheroSubject.add(superhero);
       stateSubject.add(SuperheroPageState.loaded);
     }, onError: (error, stackTrace) {
-      if (error is ApiException) {
-        print(error.message);
+      if (isInFavorite) {
+        stateSubject.add(SuperheroPageState.loaded);
+      } else {
+        if (error is ApiException) {
+          print(error.message);
+        }
+        print("Error happened in requestSuperhero: $error $stackTrace");
+        stateSubject.add(SuperheroPageState.error);
       }
-      print("Error happened in requestSuperhero: $error $stackTrace");
-      stateSubject.add(SuperheroPageState.error);
     });
   }
 
@@ -110,6 +116,8 @@ class SuperheroBlock {
       final decoded = json.decode(response.body);
       if (decoded["response"] == "success") {
         Superhero superhero = Superhero.fromJson(decoded);
+        await FavoriteSuperheroesStorage.getInstance()
+            .updateInfavorites(superhero);
         return superhero;
       } else if (decoded["response"] == "error") {
         throw ApiException(message: 'Client error happened');
