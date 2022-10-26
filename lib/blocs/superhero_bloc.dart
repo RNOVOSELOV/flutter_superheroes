@@ -9,7 +9,6 @@ import 'package:superheroes/favorite_superheroes_storage.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class SuperheroBlock {
-  Superhero? favSuperhero;
   http.Client? client;
   final String id;
 
@@ -25,8 +24,7 @@ class SuperheroBlock {
     queueSuperhero();
   }
 
-  void queueSuperhero () {
-    favSuperhero = null;
+  void queueSuperhero() {
     stateSubject.add(SuperheroPageState.loading);
     getFromFavorites();
   }
@@ -38,7 +36,6 @@ class SuperheroBlock {
         .asStream()
         .listen((superhero) {
       if (superhero != null) {
-        favSuperhero = superhero;
         superheroSubject.add(superhero);
         stateSubject.add(SuperheroPageState.loaded);
       }
@@ -86,13 +83,8 @@ class SuperheroBlock {
   void requestSuperhero() {
     requestSubscription?.cancel();
     requestSubscription = request().asStream().listen((superhero) {
-      print("${favSuperhero.hashCode}");
-      print("${superhero.hashCode}");
-      print(superhero.hashCode == favSuperhero.hashCode);
-   //   if (superheroSubject.value != superhero) {
-        superheroSubject.add(superhero);
+      superheroSubject.add(superhero);
       stateSubject.add(SuperheroPageState.loaded);
-   //   }
     }, onError: (error, stackTrace) {
       if (error is ApiException) {
         print(error.message);
@@ -126,7 +118,7 @@ class SuperheroBlock {
     throw Exception("Unknown error happened");
   }
 
-  Stream<Superhero> observeSuperhero() => superheroSubject;
+  Stream<Superhero> observeSuperhero() => superheroSubject.distinct();
 
   void dispose() {
     client?.close();

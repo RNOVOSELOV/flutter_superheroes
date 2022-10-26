@@ -128,7 +128,7 @@ class SuperheroInfoContentWidget extends StatelessWidget {
           return const SizedBox.shrink();
         }
         Superhero superhero = snapshot.data!;
-        print("New superhero id: ${superhero.id}");
+        print("New superhero: ${superhero}");
         return CustomScrollView(
           slivers: [
             SuperheroAppBar(superhero: superhero),
