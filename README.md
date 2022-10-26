@@ -1,6 +1,6 @@
 # Information about your favorite superhero
 
-<img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/Supergeroes.gif"/>
+<img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/Supergeroes.gif"  width="210" height="420" />
 
 ## О проекте
 
