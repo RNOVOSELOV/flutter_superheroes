@@ -11,6 +11,8 @@ import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
+import 'package:superheroes/widgets/info_with_button.dart';
+import 'package:superheroes/widgets/loading_indicator.dart';
 
 class SuperheroPage extends StatefulWidget {
   final String id;
@@ -57,7 +59,57 @@ class SuperheroContentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperheroInfoContentWidget();
+    SuperheroBlock bloc = Provider.of<SuperheroBlock>(context);
+    return StreamBuilder<SuperheroPageState>(
+      stream: bloc.observeSuperheroPageState(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+        final SuperheroPageState shState = snapshot.data!;
+        switch (shState) {
+          case SuperheroPageState.loading:
+            return const CustomScrollView(slivers: [
+              SliverAppBar(
+                primary: true,
+                stretch: true,
+                pinned: true,
+                floating: true,
+                backgroundColor: SuperheroesColors.background,
+              ),
+              SliverToBoxAdapter(
+                child: LoadingIndicator(topPadding: 60),
+              )
+            ]); //
+          case SuperheroPageState.loaded:
+            return const SuperheroInfoContentWidget();
+          case SuperheroPageState.error:
+            return CustomScrollView(slivers: [
+              const SliverAppBar(
+                primary: true,
+                stretch: true,
+                pinned: true,
+                floating: true,
+                backgroundColor: SuperheroesColors.background,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: InfoWithButton(
+                      title: "Error happened",
+                      subTitle: "Please, try again",
+                      buttonText: "Retry",
+                      assetImage: SuperheroesImages.supermanImagePath,
+                      imageHeight: 106,
+                      imageWidth: 126,
+                      imageTopPadding: 22,
+                      onTap: () => bloc.queueSuperhero()),
+                ),
+              ),
+            ]);
+        }
+      },
+    );
   }
 }
 
@@ -87,6 +139,7 @@ class SuperheroInfoContentWidget extends StatelessWidget {
                   if (superhero.powerstats.isNotNull())
                     PowerstatsWidget(powerstats: superhero.powerstats),
                   BiographyWidget(biography: superhero.biography),
+                  const SizedBox(height: 30),
                 ],
               ),
             )
@@ -134,10 +187,13 @@ class SuperheroAppBar extends StatelessWidget {
           },
           errorWidget: (context, url, error) {
             return Container(
-              padding: const EdgeInsets.symmetric(vertical: 42),
               color: SuperheroesColors.cardBackground,
               alignment: Alignment.center,
-              child: Image.asset(SuperheroesImages.unknownBigImagePath),
+              child: Image.asset(
+                SuperheroesImages.unknownBigImagePath,
+                width: 85,
+                height: 264,
+              ),
             );
           },
         ),
@@ -388,7 +444,7 @@ class BiographyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 36, right: 16, left: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: SuperheroesColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
@@ -397,37 +453,39 @@ class BiographyWidget extends StatelessWidget {
         children: [
           if (biography.alignmentInfo != null)
             AlignmentBioWidget(biography: biography),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 16,
-              ),
-              Center(
-                child: Text(
-                  "Bio".toUpperCase(),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                      color: SuperheroesColors.whiteTextColor),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 16, right: 16, left: 16, bottom: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Text(
+                    "Bio".toUpperCase(),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        color: SuperheroesColors.whiteTextColor),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              BioParameterWidget(
-                  parameterName: "Full name",
-                  parameterValue: biography.fullName),
-              const SizedBox(height: 20,),
-              BioParameterWidget(
-                  parameterName: "Aliases",
-                  parameterValue: biography.aliases.join("; ")),
-              const SizedBox(height: 20,),
-              BioParameterWidget(
-                  parameterName: "Place of birth",
-                  parameterValue: biography.placeOfBirth),
-              const SizedBox(height: 24,),
-            ],
+                BioParameterWidget(
+                    parameterName: "Full name",
+                    parameterValue: biography.fullName),
+                const SizedBox(
+                  height: 20,
+                ),
+                BioParameterWidget(
+                    parameterName: "Aliases",
+                    parameterValue: biography.aliases.join("; ")),
+                const SizedBox(
+                  height: 20,
+                ),
+                BioParameterWidget(
+                    parameterName: "Place of birth",
+                    parameterValue: biography.placeOfBirth),
+              ],
+            ),
           ),
         ],
       ),
@@ -482,33 +540,30 @@ class BioParameterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            parameterName.toUpperCase(),
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-                color: SuperheroesColors.greyTextColor),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          Text(
-            parameterValue,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-                color: SuperheroesColors.whiteTextColor),
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          parameterName.toUpperCase(),
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              color: SuperheroesColors.greyTextColor)
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Text(
+          parameterValue,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 16,
+              color: SuperheroesColors.whiteTextColor),
+        ),
+      ],
     );
   }
 }

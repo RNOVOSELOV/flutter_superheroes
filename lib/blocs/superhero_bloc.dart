@@ -22,7 +22,12 @@ class SuperheroBlock {
   StreamSubscription? removeFromFavoriteSubscription;
 
   SuperheroBlock({required this.id, this.client}) {
+    queueSuperhero();
+  }
+
+  void queueSuperhero () {
     favSuperhero = null;
+    stateSubject.add(SuperheroPageState.loading);
     getFromFavorites();
   }
 
@@ -35,6 +40,7 @@ class SuperheroBlock {
       if (superhero != null) {
         favSuperhero = superhero;
         superheroSubject.add(superhero);
+        stateSubject.add(SuperheroPageState.loaded);
       }
       requestSuperhero();
     },
@@ -85,12 +91,14 @@ class SuperheroBlock {
       print(superhero.hashCode == favSuperhero.hashCode);
    //   if (superheroSubject.value != superhero) {
         superheroSubject.add(superhero);
+      stateSubject.add(SuperheroPageState.loaded);
    //   }
     }, onError: (error, stackTrace) {
       if (error is ApiException) {
         print(error.message);
       }
       print("Error happened in requestSuperhero: $error $stackTrace");
+      stateSubject.add(SuperheroPageState.error);
     });
   }
 

@@ -6,6 +6,7 @@ import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
 import 'package:superheroes/widgets/info_with_button.dart';
+import 'package:superheroes/widgets/loading_indicator.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
 
 import 'package:http/http.dart' as http;
@@ -184,7 +185,9 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.minSymbols:
             return const MinSymbolsWidget();
           case MainPageState.loading:
-            return const LoadingIndicator();
+            return const LoadingIndicator(
+              topPadding: 110,
+            );
           case MainPageState.nothingFound:
             return const NothingFoundWidget();
           case MainPageState.loadingError:
@@ -323,8 +326,6 @@ class ListTile extends StatelessWidget {
 }
 
 class ListTileDismissibleWidget extends StatelessWidget {
-  final String dismissibleBackgroundText = "Remove\nfrom\nfavorites";
-
   const ListTileDismissibleWidget({
     Key? key,
     required this.superhero,
@@ -338,43 +339,46 @@ class ListTileDismissibleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
       key: ValueKey(superhero.id),
-      background: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: SuperheroesColors.cardSwipeRemove,
-        ),
-        height: 70,
-        alignment: Alignment.centerLeft,
-        child: Text(
-          dismissibleBackgroundText.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 12,
-            color: SuperheroesColors.whiteTextColor,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+      background: const DismissibleSwipeBackground(
+        isLeft: true,
       ),
-      secondaryBackground: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: SuperheroesColors.cardSwipeRemove,
-        ),
-        height: 70,
-        alignment: Alignment.centerRight,
-        child: Text(
-          dismissibleBackgroundText.toUpperCase(),
-          textAlign: TextAlign.right,
-          style: const TextStyle(
-            fontSize: 12,
-            color: SuperheroesColors.whiteTextColor,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+      secondaryBackground: const DismissibleSwipeBackground(
+        isLeft: false,
       ),
       onDismissed: (_) => bloc.removeFromFavorites(superhero.id),
       child: ListTileContainerWidget(superhero: superhero),
+    );
+  }
+}
+
+class DismissibleSwipeBackground extends StatelessWidget {
+  final String dismissibleBackgroundText = "Remove\nfrom\nfavorites";
+  final bool isLeft;
+
+  const DismissibleSwipeBackground({
+    Key? key,
+    required this.isLeft,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: SuperheroesColors.cardSwipeRemove,
+      ),
+      height: 70,
+      alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+      child: Text(
+        dismissibleBackgroundText.toUpperCase(),
+        textAlign: isLeft ? TextAlign.left : TextAlign.right,
+        style: const TextStyle(
+          fontSize: 12,
+          color: SuperheroesColors.whiteTextColor,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 }
@@ -464,26 +468,6 @@ class MinSymbolsWidget extends StatelessWidget {
               fontWeight: FontWeight.w600,
               fontSize: 20,
               color: SuperheroesColors.whiteTextColor),
-        ),
-      ),
-    );
-  }
-}
-
-class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: EdgeInsets.only(top: 110),
-        child: CircularProgressIndicator(
-          color: SuperheroesColors.blue,
-          strokeWidth: 4,
         ),
       ),
     );
