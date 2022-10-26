@@ -251,6 +251,7 @@ class SuperheroInfo {
 }
 
 class MainPageStateInfo {
+
   final String searchText;
   final bool haveFavorites;
 
