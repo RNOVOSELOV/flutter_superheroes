@@ -1,6 +1,6 @@
-# Test your reaction speed
+# Information about your favorite superhero
 
-<img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/Supergeroes.gif" width="100" height="220" />
+<img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/Supergeroes.gif"/>
 
 ## О проекте
 
