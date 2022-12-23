@@ -6,6 +6,8 @@
 
 "Supergeroes" - Бесплатное приложение, реализующее открытое API https://www.superheroapi.com/.
 
+Проект создан для изучения фреймворка Flutter, познакомился с Provider, RxDart, ListView, Http.
+
 ## Развитие проекта
 
 ### Версия 1.0
