@@ -1,5 +1,7 @@
 # Information about your favorite superhero
 
+[![N|Solid](https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg)](https://flutter.dev/)
+
 <img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/supergeroes.gif"/>
 
 ## О проекте
@@ -11,7 +13,7 @@
 **Внимание!** 
 Для коректного запуска приложения необходимо:
 1. Получить токен на сайте https://www.superheroapi.com/. 
-2. В корне проекта создать файл c названием ".env".
+2. В корне проекта создать файл c именем ".env".
 3. Добавить в файл полученный токен в формате: 
 ```sh
 SUPERHERO_TOKEN=YOUR_TOKEN
