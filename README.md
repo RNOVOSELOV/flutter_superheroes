@@ -1,6 +1,6 @@
 # Information about your favorite superhero
 
-[![N|Solid](https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg) Information about your favorite superhero](https://flutter.dev/)
+[![N|Solid](https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg)](https://flutter.dev/) Information about your favorite superhero
 
 <img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/supergeroes.gif"/>
 
