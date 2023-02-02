@@ -2,7 +2,9 @@
 
 <br/>
 
-<img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/supergeroes.gif"/>
+<p align="center">
+  <img src="https://github.com/RNOVOSELOV/flutter_superheroes/blob/main/resources/supergeroes.gif"/>
+</p>
 
 ## О проекте
 
