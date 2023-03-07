@@ -1,4 +1,4 @@
-[<img src="https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg"  width="150">](https://flutter.dev/) 
+[<img src="https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg"  width="150">](https://flutter.dev/)
 #  🦸&nbsp;&nbsp;Information about your favorite superhero
 <br/>
 <p align="center">
@@ -9,11 +9,11 @@
 
 "Supergeroes" - Бесплатное приложение, реализующее открытое [Superhero API](https://www.superheroapi.com/).
 
-**Внимание!** 
+**Внимание!**
 Для коректного запуска приложения необходимо:
-1. Получить токен на сайте https://www.superheroapi.com/. 
+1. Получить токен на сайте https://www.superheroapi.com/.
 2. В корне проекта создать файл c именем ".env".
-3. Добавить в файл полученный токен в формате: 
+3. Добавить в файл полученный токен в формате:
 ```sh
 SUPERHERO_TOKEN=YOUR_TOKEN
 ```
