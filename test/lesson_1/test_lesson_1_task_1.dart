@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:superheroes/main.dart';
 
-import '../shared/test_helpers.dart';
 
 void runTestLesson1Task1() {
   testWidgets('module1', (WidgetTester tester) async {
