@@ -24,6 +24,6 @@ SUPERHERO_TOKEN=YOUR_TOKEN
 
 - Реализован интерфейс, возможность добавления супергероя в "Избранное".
 
-<!-- My superhero API token: add to root '.env' file
+<!-- My superhero API token. Add to root '.env' file:
 SUPERHERO_TOKEN=8133298466745486
 -->
